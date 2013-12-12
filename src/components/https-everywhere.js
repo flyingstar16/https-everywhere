@@ -109,6 +109,7 @@ const DUMMY_ARRAY = [];
 
 const EARLY_VERSION_CHECK = !("nsISessionStore" in CI && typeof(/ /) === "object");
 
+// This is probably obsolete since the switch to the channel.redirectTo API
 const OBSERVER_TOPIC_URI_REWRITE = "https-everywhere-uri-rewrite";
 
 // XXX: Better plan for this?
@@ -199,7 +200,16 @@ function HTTPSEverywhere() {
     this.obsService.addObserver(this, "profile-after-change", false);
     this.obsService.addObserver(this, "sessionstore-windows-restored", false);
   }
-  
+
+  var pref_service = Components.classes["@mozilla.org/preferences-service;1"]
+      .getService(Components.interfaces.nsIPrefBranchInternal);
+  var branch = pref_service.QueryInterface(Components.interfaces.nsIPrefBranchInternal);
+
+  branch.addObserver("extensions.https_everywhere.enable_mixed_rulesets",
+                         this, false);
+  branch.addObserver("security.mixed_content.block_active_content",
+                         this, false);
+
   return;
 }
 
@@ -276,9 +286,6 @@ HTTPSEverywhere.prototype = {
     {
       category: "app-startup",
     },
-    {
-      category: "content-policy",
-    },
   ],
 
   // QueryInterface implementation, e.g. using the generateQI helper
@@ -286,7 +293,6 @@ HTTPSEverywhere.prototype = {
     [ Components.interfaces.nsIObserver,
       Components.interfaces.nsIMyInterface,
       Components.interfaces.nsISupports,
-      Components.interfaces.nsIContentPolicy,
       Components.interfaces.nsISupportsWeakReference,
       Components.interfaces.nsIWebProgressListener,
       Components.interfaces.nsIWebProgressListener2,
@@ -440,7 +446,7 @@ HTTPSEverywhere.prototype = {
       if (channel.URI.spec in https_everywhere_blacklist) {
         this.log(DBUG, "Avoiding blacklisted " + channel.URI.spec);
         if (lst) lst.breaking_rule(https_everywhere_blacklist[channel.URI.spec]);
-        else        this.log(WARN,"Failed to indicate breakage in content menu");
+        else        this.log(NOTE,"Failed to indicate breakage in content menu");
         return;
       }
       HTTPS.replaceChannel(lst, channel);
@@ -504,6 +510,15 @@ HTTPSEverywhere.prototype = {
       this.log(DBUG,"Got sessionstore-windows-restored");
       this.maybeShowObservatoryPopup();
       this.maybeShowDevPopup();
+    } else if (topic == "nsPref:changed") {
+	// If the user toggles the Mixed Content Blocker settings, reload the rulesets
+	// to enable/disable the mixedcontent ones
+        switch (data) {
+            case "security.mixed_content.block_active_content":
+            case "extensions.https_everywhere.enable_mixed_rulesets":
+                HTTPSRules.init();
+                break;
+        }
     }
     return;
   },
@@ -604,26 +619,6 @@ HTTPSEverywhere.prototype = {
         callback.onRedirectVerifyCallback(0);
   },
 
-  // These implement the nsIContentPolicy API; they allow both yes/no answers
-  // to "should this load?", but also allow us to change the thing.
-
-  shouldLoad: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeTypeGuess, aInternalCall) {
-    //this.log(WARN,"shouldLoad for " + unwrappedLocation.spec + " of type " + aContentType);
-       if (shouldLoadTargets[aContentType] != null) {
-         var unwrappedLocation = IOUtil.unwrapURL(aContentLocation);
-         var scheme = unwrappedLocation.scheme;
-         var isHTTP = /^https?$/.test(scheme);   // s? -> either http or https
-         this.log(VERB,"shoulLoad for " + aContentLocation.spec);
-         if (isHTTP)
-           HTTPS.forceURI(aContentLocation, null, aContext);
-       } 
-    return true;
-  },
-
-  shouldProcess: function(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, aExtra) {
-    return this.shouldLoad(aContentType, aContentLocation, aRequestOrigin, aContext, aMimeType, CP_SHOULDPROCESS);
-  },
-
   get_prefs: function(prefBranch) {
     if(!prefBranch) prefBranch = PREFBRANCH_ROOT;
 
@@ -668,23 +663,6 @@ HTTPSEverywhere.prototype = {
     }
 
     return o_branch;
-  },
-
-  /**
-   * Notify observers of the topic OBSERVER_TOPIC_URI_REWRITE.
-   *
-   * @param nsIURI oldURI
-   * @param string newSpec
-   */
-  notifyObservers: function(oldURI, newSpec) {
-    this.log(INFO, "Notifying observers of rewrite from " + oldURI.spec + " to " + newSpec);
-    try {
-      // The subject has to be an nsISupports and the extra data is a string,
-      // that's why one is an nsIURI and the other is a nsIURI.spec string.
-      this.obsService.notifyObservers(oldURI, OBSERVER_TOPIC_URI_REWRITE, newSpec);
-    } catch (e) {
-      this.log(WARN, "Couldn't notify observers: " + e);
-    }
   },
 
   chrome_opener: function(uri, args) {
@@ -747,8 +725,6 @@ HTTPSEverywhere.prototype = {
             dls.addProgressListener(this, CI.nsIWebProgress.NOTIFY_LOCATION);
             
             this.log(INFO,"ChannelReplacement.supported = "+ChannelReplacement.supported);
-
-            HTTPSRules.init();
 
             if(!Thread.hostRunning)
                 Thread.hostRunning = true;

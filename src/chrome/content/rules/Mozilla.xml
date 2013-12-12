@@ -102,6 +102,7 @@
 			- addons.cdn
 			- developer.cdn
 			- download.cdn		(→ ftp.mozilla.org)
+			- download-installer.cdn
 			- fhr.cdn
 			- getpersonas.cdn
 			- marketplace.cdn
@@ -142,6 +143,7 @@
 			- foundationwiki
 			- ftp
 			- gameon
+            - gpg
 			- hacks
 			- hg
 			- inform
@@ -307,4 +309,7 @@
 
 	<rule from="^http://(planet|support)\.mozillamessaging\.com/"
 		to="https://$1.mozillamessaging.com/" />
+
+        <rule from="^https://(keys|keyserver|gpg)\.mozilla\.org/"
+                to="https://$1.mozilla.org/" />
 </ruleset>
