@@ -203,6 +203,7 @@ function HTTPSEverywhere() {
     this.obsService.addObserver(this, "profile-before-change", false);
     this.obsService.addObserver(this, "profile-after-change", false);
     this.obsService.addObserver(this, "sessionstore-windows-restored", false);
+    this.obsService.addObserver(this, "browser:purge-session-history", false);
   }
 
   var pref_service = Components.classes["@mozilla.org/preferences-service;1"]
@@ -327,7 +328,6 @@ HTTPSEverywhere.prototype = {
   // QueryInterface implementation, e.g. using the generateQI helper
   QueryInterface: XPCOMUtils.generateQI(
     [ Components.interfaces.nsIObserver,
-      Components.interfaces.nsIMyInterface,
       Components.interfaces.nsISupports,
       Components.interfaces.nsISupportsWeakReference,
       Components.interfaces.nsIWebProgressListener,
@@ -552,17 +552,22 @@ HTTPSEverywhere.prototype = {
 
         // this pref gets set to false and then true during FF 26 startup!
         // so do nothing if we're being notified during startup
-	if (!this.browser_initialised)
+        if (!this.browser_initialised)
             return;
         switch (data) {
             case "security.mixed_content.block_active_content":
             case "extensions.https_everywhere.enable_mixed_rulesets":
                 var p = CC["@mozilla.org/preferences-service;1"].getService(CI.nsIPrefBranch);
-    		var val = p.getBoolPref("security.mixed_content.block_active_content");
-		this.log(INFO,"nsPref:changed for "+data + " to " + val);
+                var val = p.getBoolPref("security.mixed_content.block_active_content");
+                this.log(INFO,"nsPref:changed for "+data + " to " + val);
                 HTTPSRules.init();
                 break;
         }
+    } else if (topic == "browser:purge-session-history") {
+      // The list of rulesets that have been loaded from the sqlite DB
+      // constitutes a parallel history store, so we have to clear it.
+      this.log(DBUG, "History cleared, reloading HTTPSRules to avoid information leak.");
+      HTTPSRules.init();
     }
     return;
   },
@@ -585,7 +590,36 @@ HTTPSEverywhere.prototype = {
     };
     if (!shown && !enabled)
       ssl_observatory.registerProxyTestNotification(obs_popup_callback);
+
+    if (shown && enabled)
+      this.maybeCleanupObservatoryPrefs(ssl_observatory);
   },
+
+  maybeCleanupObservatoryPrefs: function(ssl_observatory) {
+    // Recover from a past UI processing bug that would leave the Obsevatory
+    // accidentally disabled for some users
+    // https://trac.torproject.org/projects/tor/ticket/10728
+    var clean = ssl_observatory.myGetBoolPref("clean_config");
+    if (clean) return;
+
+    // unchanged: returns true if a pref has not been modified
+    var unchanged = function(p){return !ssl_observatory.prefs.prefHasUserValue("extensions.https_everywhere._observatory."+p)};
+    var cleanup_obsprefs_callback = function(tor_avail) {
+      // we only run this once
+      ssl_observatory.prefs.setBoolPref("extensions.https_everywhere._observatory.clean_config", true);
+      if (!tor_avail) {
+        // use_custom_proxy is the variable that is often false when it should be true;
+        if (!ssl_observatory.myGetBoolPref("use_custom_proxy")) {
+           // however don't do anything if any of the prefs have been set by the user
+           if (unchanged("alt_roots") && unchanged("self_signed") && unchanged ("send_asn") && unchanged("priv_dns")) {
+             ssl_observatory.prefs.setBoolPref("extensions.https_everywhere._observatory.use_custom_proxy", true);
+           }
+        }
+      }
+    }
+    ssl_observatory.registerProxyTestNotification(cleanup_obsprefs_callback);
+  },
+
 
   getExperimentalFeatureCohort: function() {
     // This variable is used for gradually turning on features for testing and
