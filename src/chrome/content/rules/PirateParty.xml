@@ -26,6 +26,11 @@
 	Targets solely for wildcard cookies:
 
 		- *.forum.pirati.cz
+		
+
+	Other rulessets:
+	
+		- PPS.xml
 
 -->
 <ruleset name="Pirate Party" platform="mixedcontent">
@@ -59,6 +64,16 @@
 	<target host="remixdepolitiek.nl" />
 	<target host="www.remixdepolitiek.nl" />
 
+	<target host="pirateparty.org.au" />
+	<target host="*.pirateparty.org.au" />
+
+	<target host="pirateirc.net" />
+	<target host="*.pirateirc.net" />
+
+	<target host="piratepad.ca" />
+	<target host="*.piratepad.ca" />
+
+	<target host="europeanpirates.eu" />
 
 	<securecookie host="^(.*\.)?junge-piraten\.de$" name=".*" />
 	<securecookie host="^(.*\.)?piratenpartei\.de$" name=".*" />
@@ -136,5 +151,31 @@
 
 	<rule from="^http://(?:www\.)?uspirates\.org/"
 		to="https://uspirates.org/" />
+
+	<!--
+		For .org.au
+
+			Works:
+
+				- voting
+				- join
+				- payments
+				- discuss
+
+			Doesn't Work:
+
+				- $
+				- www
+					-->
+	<rule from="^http://(voting|join|payments|discuss)\.pirateparty\.org\.au/"
+		to="https://$1.pirateparty.org.au/" />
+
+	<rule from="^http://webchat\.pirateirc\.net/"
+		to="https://webchat.pirateirc.net/" />
+
+	<rule from="^http://(www\.)?piratepad\.ca/"
+		to="https://www.piratepad.ca/" />
+
+	<rule from="^http://europeanpirates\.eu/" to="https://europeanpirates.eu/" />
 
 </ruleset>
