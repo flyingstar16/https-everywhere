@@ -1,5 +1,10 @@
 <!--
-	For rules causing false/broken MCB, see GetDigital.de-falsemixed.
+	For rules causing false/broken MCB, see GetDigital.de-falsemixed.xml.
+
+
+	Other getDigital rulesets:
+
+		- GetDigital.eu.xml
 
 
 	Problematic domains:
@@ -22,7 +27,7 @@
 <ruleset name="Getdigital.de (partial)">
 
 	<target host="getdigital.de"/>
-	<target host="www.getdigital.de"/>
+	<target host="*.getdigital.de"/>
 		<!--
 			Avoid false/broken MCB:
 						-->
@@ -33,6 +38,13 @@
 		<!--exclusion pattern="^http://(www\.)?getdigital\.de/blog/(?=wp-content/|wp-includes/)" /-->
 	<target host="getdigital-blog.de" />
 	<target host="www.getdigital-blog.de" />
+
+
+	<!--	Not secured by server:
+					-->
+	<!--securecookie host="^\.getdigital\.de$" name="^gdsession3$" /-->
+
+	<securecookie host="^\.getdigital\.de$" name=".+" />
 
 
 	<rule from="^http://(?:www\.)?getdigital\.de/(?!/*blog(?!/+wp-content/|/+wp-includes/))"

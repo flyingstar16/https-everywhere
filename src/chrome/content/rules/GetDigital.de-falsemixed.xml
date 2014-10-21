@@ -1,5 +1,5 @@
 <!--
-	For rules causing false/broken MCB, see GetDigital.de-falsemixed.
+	For rules not causing false/broken MCB, see Getdigital.de.xml.
 
 -->
 <ruleset name="getDigital.de (false MCB)" platform="mixedcontent">
@@ -7,7 +7,7 @@
 	<target host="getdigital.de"/>
 	<target host="www.getdigital.de"/>
 	<target host="getdigital-blog.de" />
-	<target host="www.getdigital-blog.de" />
+	<target host="*.getdigital-blog.de" />
 
 
 	<rule from="^http://(?:www\.)?getdigital\.de/"

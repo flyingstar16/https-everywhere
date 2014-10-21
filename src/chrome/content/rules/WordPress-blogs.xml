@@ -29,8 +29,6 @@
 	<target host="armservers.com" />
 	<target host="www.armservers.com" />
 	<target host="blog.bandcamp.com" />
-	<target host="betabeat.com" />
-	<target host="www.betabeat.com" />
 	<target host="bgr.com" />
 	<target host="www.bgr.com" />
 	<target host="blog.blockchain.info" />
@@ -55,8 +53,6 @@
 	<target host="fightcopyrighttrolls.com" />
 	<target host="www.fightcopyrighttrolls.com" />
 	<target host="safeandsavvy.f-secure.com" />
-	<target host="about.gigaom.com" />
-	<target host="event.gigaom.com" />
 	<target host="blog.gitorious.org" />
 	<target host="blog.gravity.com" />
 	<target host="hackaday.com" />
@@ -94,6 +90,8 @@
 	<target host="blog.suitabletech.com" />
 	<target host="techcrunch.com" />
 	<target host="www.techcrunch.com" />
+	<target host="thechive.com" />
+	<target host="www.thechive.com" />
 	<target host="*.time.com" />
 	<target host="blog.tinypic.com" />
 	<target host="tppinfo.org" />
@@ -133,9 +131,6 @@
 
 	<rule from="^http://blog\.bandcamp\.com/"
 		to="https://blog.bandcamp.com/" />
-
-	<rule from="^https?://(?:www\.)?betabeat\.com/"
-		to="https://betabeat.com/" />
 
 	<rule from="^http://(?:www\.)?bgr\.com/"
 		to="https://bgr.com/" />
@@ -184,9 +179,6 @@
 
 	<rule from="^http://safeandsavvy\.f-secure\.com/"
 		to="https://safeandsavvy.f-secure.com/" />
-
-	<rule from="^http://(abou|even)t\.gigaom\.com/"
-		to="https://$1t.gigaom.com/" />
 
 	<!--	ID: gitorious	-->
 	<rule from="^http://blog\.gitorious\.org/"
@@ -270,6 +262,9 @@
 	<!--	ID: tctechcrunch2011	-->
 	<rule from="^https?://(?:www\.)?techcrunch\.com/"
 		to="https://techcrunch.com/" />
+
+	<rule from="^http://(?:www\.)?thechive\.com/"
+		to="https://thechive.com/" />
 
 	<rule from="^http://(business|entertainment|healthland|ideas|keepingscore|lightbox|nation|newsfeed|science|style|swampland|techland|world)\.time\.com/"
 		to="https://$1.time.com/" />
