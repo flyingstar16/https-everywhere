@@ -1,4 +1,4 @@
-<!-- Personal rule. DO NOT SUBMIT -->
+<!-- Personal rules. DO NOT SUBMIT -->
 <ruleset name="cmoretti.it">
 
 <!-- Personal rule. DO NOT SUBMIT -->
@@ -6,11 +6,11 @@
 
 	<rule from="^http://cmoretti\.it/" to="https://cmoretti.it/" />
 
-	<target host="www.cmoretti.it" />
-	<target host="reader.cmoretti.it" />
-	<target host="git.cmoretti.it" />
-	<target host="cloud.cmoretti.it" />
-
+	<target host="*.cmoretti.it" />
 	<rule from="^http://([^/:@]*)\.cmoretti\.it/" to="https://$1.cmoretti.it/" />
 
+	<target host="flyingstar16.duckdns.org" />
+	<rule from="^http://flyingstar16\.duckdns\.org/" to="https://flyingstar16.duckdns.org/" />
+
 </ruleset>
+
