@@ -17,6 +17,7 @@ APP_NAME=https-everywhere
 
 cd "`dirname $0`"
 RULESETS_SQLITE="$PWD/src/defaults/rulesets.sqlite"
+ANDROID_APP_ID=org.mozilla.firefox
 
 [ -d pkg ] || mkdir pkg
 
@@ -72,19 +73,8 @@ die() {
   exit 1
 }
 
-if [ "$1" != "--fast" ] ; then
-  if [ -f utils/trivial-validate.py ]; then
-    VALIDATE="python2.7 ./utils/trivial-validate.py --ignoredups google --ignoredups facebook"
-  elif [ -f trivial-validate.py ] ; then
-    VALIDATE="python2.7 trivial-validate.py --ignoredups google --ignoredups facebook"
-  elif [ -x utils/trivial-validate ] ; then
-    # This case probably never happens
-    VALIDATE=./utils/trivial-validate
-  else
-    VALIDATE=./trivial-validate
-  fi
-
-  if $VALIDATE src/chrome/content/rules >&2
+if [ "$1" != "--fast" -a -z "$FAST" ] ; then
+  if python2.7 ./utils/trivial-validate.py --quiet --db $RULESETS_SQLITE >&2
   then
     echo Validation of included rulesets completed. >&2
     echo >&2
@@ -153,6 +143,7 @@ fi
 
 cd src
 
+
 # Build the XPI!
 rm -f "../$XPI_NAME"
 #zip -q -X -9r "../$XPI_NAME" . "-x@../.build_exclusions"
@@ -167,6 +158,7 @@ else
   echo >&2 "Total included rules: `sqlite3 $RULESETS_SQLITE 'select count(*) from rulesets'`"
   echo >&2 "Rules disabled by default: `find chrome/content/rules -name "*.xml" | xargs grep -F default_off | wc -l`"
   echo >&2 "Created $XPI_NAME"
+  ../utils/android-push.sh "$XPI_NAME"
   if [ -n "$BRANCH" ]; then
     cd ../..
     cp $SUBDIR/$XPI_NAME pkg

@@ -26,11 +26,11 @@
 		favicon picked simply because it is
 		(or should be) innocuous:
 						-->
-	<rule from="^http://www\.fasthosts\.co\.uk/js/track\.js"
+	<rule from="^https://www\.fasthosts\.co\.uk/js/track\.js"
 		to="https://www.fasthosts.co.uk/favicon.ico" />
 
 	<!--	Cert only matches www.	-->
-	<rule from="^https?://(?:www\.)?fasthosts\.co\.uk/"
+	<rule from="^http://(?:www\.)?fasthosts\.co\.uk/"
 		to="https://www.fasthosts.co.uk/" />
 
 	<rule from="^http://(admin|login|order)\.fasthosts\.co\.uk/"
@@ -40,7 +40,7 @@
 		to="https://secure$1.prositehosting.co.uk/" />
 
 	<!--	Cert only matches www.	-->
-	<rule from="^https?://(?:www\.)?ukreg\.com/"
+	<rule from="^http://(?:www\.)?ukreg\.com/"
 		to="https://www.ukreg.com/" />
 
 </ruleset>

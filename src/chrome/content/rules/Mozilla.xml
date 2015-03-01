@@ -1,21 +1,30 @@
 <!--
+Disabled by https-everywhere-checker because:
+Fetch error: http://drumbeat.org/ => https://drumbeat.org/: (7, 'Failed to connect to drumbeat.org port 443: Connection refused')
+Fetch error: http://www.drumbeat.org/ => https://www.drumbeat.org/: (7, 'Failed to connect to www.drumbeat.org port 443: Connection refused')
+Fetch error: http://mozillaignite.com/ => https://mozillaignite.com/: (51, "SSL: no alternative certificate subject name matches target host name 'mozillaignite.com'")
 	For problematic rules, see Mozilla-problematic.xml.
 
 
 	Other Mozilla rulesets:
 
 		- Allizom.org.xml
+		- Are_We_Slim_Yet.com.xml
 		- BrowserID.xml
 		- Bugzilla.xml
 		- Firefox.com.xml
 		- GetPersonas.xml
 		- Lizard_Wrangler.com.xml
 		- Mozilla.com.tw.xml
+		- Mozilla.jp.xml
+		- Mozilla-Community.org.xml
 		- Mozilla_Labs.com.xml
 		- Mozilla_Persona.xml
 		- Mozilla_Webmaker.xml
+		- Mozillians.org.xml
 		- Open_Badges.xml
 		- Public_Suffix.org.xml
+		- TogetherJS.com.xml
 
 
 	CDN buckets:
@@ -29,7 +38,7 @@
 			- getpersonas-cdn.mozilla.net
 			- hardhat.mozilla.net
 
-		- images.s4.exacttarget.com.edgesuite.net
+		- a248.e.akamai.net/f/1/1/1/image.e.mozilla.org/
 
 			- image.e.mozilla.org
 
@@ -48,6 +57,7 @@
 
 			- www.authstage ¹
 			- identity ²
+			- *.malware-error *
 			- www-trunk.stage ¹
 
 		- mozilla.org subdomains:
@@ -58,6 +68,7 @@
 			- view.e ¹
 			- graphs ³
 			- krakenbenchmark ³
+			- mig ³
 			- releases ³
 			- sfx-images ³		(banners)
 			- start ¹
@@ -68,6 +79,7 @@
 
 	¹ Dropped
 	² Hosted on tumblr
+	* https://trac.torproject.org/projects/tor/ticket/14022
 	³ Refused
 
 
@@ -108,9 +120,10 @@
 		- drumbeat.org
 		- www.drumbeat.org
 
-		- mozilla.com subdomains:
+		- mozilla.com
 
-			- (www.)
+		- [\w.-]+.mozilla.com: *
+
 			- activations
 			- addons
 			- air
@@ -140,8 +153,10 @@
 
 			- snippets
 			- support
+			- v
+			- www
 
-		- mozilla.net subdomains:
+		- [\w.-]+.mozilla.net: *
 
 			- static-cdn.addons
 			- static-ssl-cdn.addons
@@ -150,6 +165,7 @@
 
 				- activations
 				- addons
+				- air
 				- developer
 				- download		(→ ftp.mozilla.org)
 				- download-installer
@@ -164,9 +180,9 @@
 			- videos-cdn
 			- www			(→ www.mozilla.org)
 
-		- mozilla.org subdomains:
+		- mozilla.org
 
-			- (www.)
+		- [\w.-]+.mozilla.org: *
 
 			- activations
 
@@ -208,6 +224,7 @@
 			- foundationwiki
 			- ftp
 			- gameon
+			- gear
 			- gpg
 			- hacks
 			- hg
@@ -254,8 +271,10 @@
 			- loop.telemetry
 
 			- telemetry-dash
+			- treeherder
 			- videos
 			- wiki
+			- www
 
 		- mdn.mozillademos.org
 		- (www.)mozillaignite.org
@@ -264,6 +283,8 @@
 		- support.mozillamessaging.com
 		- (www.)webfwd.org
 
+	* Except where excluded below
+
 
 	These altnames don't exist:
 
@@ -271,12 +292,14 @@
 		- analysis.telemetry.mozilla.org
 
 
-	Cookie domains:
+	Insecure cookies are set for these domains:
 
-		- mail.mozilla.com
-		- mail.corp.phx1.mozilla.com
+		- .mozilla.org
 		- addons.mozilla.org
-		- reps.mozilla.org
+		- bugzilla.mozilla.org
+		- .sendto.mozilla.org
+		- support.mozilla.org
+		- telemetry.mozilla.org
 
 
 	Mixed content:
@@ -293,13 +316,13 @@
 	* Secured by us
 
 -->
-<ruleset name="Mozilla">
+<ruleset name="Mozilla" default_off='failed ruleset test'>
 
 	<target host="drumbeat.org" />
 	<target host="www.drumbeat.org" />
 	<target host="mozilla.com" />
 	<target host="*.mozilla.com" />
-		<exclusion pattern="^http://(?:www\.authstage|fxfeeds|identity|www-trunk\.stage|status)\.mozilla\.com/" />
+		<exclusion pattern="^http://(?:www\.authstage|fxfeeds|identity|.+\.malware-error|www-trunk\.stage|status)\.mozilla\.com/" />
 		<exclusion pattern="^http://(?:[\w\.-]+\.)?phish-report\.mozilla\.com/" />
 	<target host="*.mozilla.net" />
 		<exclusion pattern="^http://(?:cdn|hardhat)\.mozilla\.net/" />
@@ -312,17 +335,27 @@
 
 				https://mail1.eff.org/pipermail/https-everywhere-rules/2013-June/001635.html
 													-->
-		<exclusion pattern="^http://(?:bonsai|browserquest|trychooser\.pub\.build|dxr|\w+\.e|graphs|krakenbenchmark|releases|sfx-images|start|w(?:ebsite|ww)-archive)\.mozilla\.org/" />
+		<exclusion pattern="^http://(?:bonsai|browserquest|trychooser\.pub\.build|dxr|(?!image)\w+\.e|graphs|krakenbenchmark|mig|releases|sfx-images|start|w(?:ebsite|ww)-archive)\.mozilla\.org/" />
 	<target host="mdn.mozillademos.org" />
 	<target host="mozillaignite.com" />
 	<target host="*.mozillaignite.com" />
 	<target host="*.mozillamessaging.com" />
 	<target host="webfwd.org" />
 	<target host="www.webfwd.org" />
+	
+	<!-- Images in e-mail newsletters
+	
+	Example:
+	http://image.e.mozilla.org/lib/fe9915707361037e75/m/1/headerLogo_112x90.jpg
+	https://a248.e.akamai.net/f/1/1/1/image.e.mozilla.org/lib/fe9915707361037e75/m/1/headerLogo_112x90.jpg
+	-->
+	<rule from="^http://image\.e\.mozilla\.org/"
+		to="https://a248.e.akamai.net/f/1/1/1/image.e.mozilla.org/" />
 
 
 	<!--	Not secured by server:
 					-->
+	<!--securecookie host="^\.mozilla\.org$" name="^(optimizelyBuckets|optimizelyEndUserId|optimizelyPendingLogEvents|optimizelySegments)$" /-->
 	<!--securecookie host="^addons\.mozilla\.org$" name="^(apps/files/tabstops|multidb_pin_writes|recently-viewed-collections|search-appver|search-platform|visitor-seen_impala_first_visit)$" /-->
 	<!--securecookie host="^bugzilla\.mozilla\.org$" name="^(BUGLIST|LASTORDER)$" /-->
 	<!--securecookie host="^\.sendto\.mozilla\.org$" name="^X-CheckNode$" /-->
@@ -341,32 +374,29 @@
 
 	<!--	Redirects as so over http.
 						-->
-	<rule from="^https?://www\.mozilla\.net/"
+	<rule from="^http://www\.mozilla\.net/"
 		to="https://www.mozilla.org/" />
 
-	<rule from="^https?://download\.cdn\.mozilla\.net/"
+	<rule from="^http://download\.cdn\.mozilla\.net/"
 		to="https://ftp.mozilla.org/" />
 
-	<rule from="^https?://getpersonas-cdn\.mozilla\.net/"
+	<rule from="^http://getpersonas-cdn\.mozilla\.net/"
 		to="https://getpersonas.cdn.mozilla.net/" />
 
 	<rule from="^http://([\w.-]+)\.mozilla\.net/"
 		to="https://$1.mozilla.net/" />
 
-	<rule from="^https?://affiliates-cdn\.mozilla\.org/"
+	<rule from="^http://affiliates-cdn\.mozilla\.org/"
 		to="https://affiliates.mozilla.org/" />
 
 	<!--	Would these rules be safe?
 
 	<rule from="^http://click\.e\.mozilla\.org/"
-		to="https://click.virt.s4.exacttarget.com/" />
-
-	<rule from="^http://image\.e\.mozilla\.org/"
-		to="https://image.s4.exacttarget.com/" /-->
+		to="https://click.virt.s4.exacttarget.com/" /-->
 
 	<!--	Redirects like so over http.
 						-->
-	<rule from="^https?://talkback-public\.mozilla\.org/"
+	<rule from="^http://talkback-public\.mozilla\.org/"
 		to="https://crash-stats.mozilla.com/" />
 
 	<rule from="^http://([\w.-]+\.)?mozilla\.(com|org)/"

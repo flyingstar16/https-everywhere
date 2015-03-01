@@ -4,11 +4,11 @@
     }, 
     "background": {
         "scripts": [
-            "util.js", 
             "URI.js", 
             "lru.js", 
             "rule_list.js", 
             "rules.js", 
+            "util.js", 
             "background.js"
         ]
     }, 
@@ -38,5 +38,5 @@
         "<all_urls>"
     ], 
     "update_url": "https://www.eff.org/files/https-everywhere-chrome-updates.xml", 
-    "version": "2014.4.16"
+    "version": "2014.11.25"
 }

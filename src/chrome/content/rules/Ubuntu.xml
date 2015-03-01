@@ -7,6 +7,13 @@
 		- Ubuntu_Forums.org.xml
 
 
+	Problematic domains:
+
+		- (www.)?ubuntuone.com *
+
+	* Supports <=ssl3 only
+
+
 	Nonfunctional subdomains:
 
 		- (www.) ¹
@@ -33,6 +40,7 @@
 		- security ²
 		- status ²
 		- summit ²
+		- upstart ¹
 		- women ¹
 
 	¹ Dropped
@@ -57,8 +65,10 @@
 			- assets
 			- cloud
 			- community
+			- design
 			- developer
 			- myapps.developer
+			- entropy
 			- fridge
 			- help
 			- insights
@@ -75,12 +85,11 @@
 			- unity
 			- wiki
 
-		- (www.)ubuntuone.com
-
 
 	These altnames don't exist:
 
 		- www.assets.ubuntu.com
+		- www.myapps.developer.ubuntu.com
 		- www.lists.ubuntu.com
 
 
@@ -104,27 +113,27 @@
 	* Unsecurable, doesn't trip MCB
 
 -->
-<ruleset name="Ubuntu (partial)">
+<ruleset name="Ubuntu (partial)" default_off="Needs ruleset tests">
 
 	<target host="*.ubuntu.com" />
 		<!--
 			Avoid false/broken MCB:
 						-->
 		<exclusion pattern="^http://community\.ubuntu\.com/+(?!favicon\.ico|wp-content/|wp-includes/)" />
-	<target host="ubuntuone.com" />
-	<target host="www.ubuntuone.com" />
+	<!--target host="ubuntuone.com" /-->
+	<!--target host="www.ubuntuone.com" /-->
 
 
 	<securecookie host="^(?:apps|login|pay|jenkins\.qa|wiki)\.ubuntu\.com$" name=".+" />
 
 
-	<rule from="^http://(apps|assets|cloud|community|(?:myapps\.)?developer|fridge|help|insights|juju|lists|login|maas|one|patches|pay|jenkins\.qa|uds|uec-images|unity|wiki)\.ubuntu\.com/"
+	<rule from="^http://(apps|assets|cloud|community|design|(?:myapps\.)?developer|entropy|fridge|help|insights|juju|lists|login|maas|one|patches|pay|jenkins\.qa|uds|uec-images|unity|wiki)\.ubuntu\.com/"
 		to="https://$1.ubuntu.com/" />
 
 	<rule from="^http://shop\.ubuntu\.com/"
 		to="https://shop.canonical.com/" />
 
-	<rule from="^http://(www\.)?ubuntuone\.com/"
-		to="https://$1ubuntuone.com/" />
+	<!--rule from="^http://(www\.)?ubuntuone\.com/"
+		to="https://$1ubuntuone.com/" /-->
 
 </ruleset>
