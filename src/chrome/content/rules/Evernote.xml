@@ -15,11 +15,9 @@
 		- devcup ¹
 		- 2012.devcup ¹
 		- ru-support ²
-		- shop ³
 
 	¹ Works, mismatched, CN: *.challengepost.com
 	² Works, mismatched, CN: vmeste.bank24.ru
-	³ Redirects to http, mismatched, CN: *.myshopify.com
 
 
 	Fully covered subdomains:
@@ -29,7 +27,7 @@
 		- dev
 		- discussion
 		- sandbox
-		- shop		(→ evernote.myshopify.com)
+		- shop
 		- support
 		- trunk
 
@@ -42,16 +40,20 @@
 <ruleset name="Evernote.com (partial)">
 
 	<target host="evernote.com" />
-	<target host="*.evernote.com" />
+	<target host="blog.evernote.com" />
+	<target host="dev.evernote.com" />
+	<target host="discussion.evernote.com" />
+	<target host="sandbox.evernote.com" />
+	<target host="shop.evernote.com" />
+	<target host="support.evernote.com" />
+	<target host="trunk.evernote.com" />
+	<target host="www.evernote.com" />
 
 
 	<securecookie host="^(?:.*\.)?evernote\.com$" name=".+" />
 
 
-	<rule from="^http://((?:blog|dev|discussion|sandbox|support|trunk|www)\.)?evernote\.com/"
-		to="https://$1evernote.com/" />
-
-	<rule from="^http://shop\.evernote\.com/"
-		to="https://evernote.myshopify.com/" />
+	<rule from="^http:"
+		to="https:" />
 
 </ruleset>
