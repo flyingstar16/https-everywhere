@@ -1,3 +1,4 @@
+
 <!--
 	^: Cert only matches www
 
@@ -18,7 +19,7 @@
 		- www.okcoin.cn
 
 -->
-<ruleset name="OKCoin.cn">
+<ruleset name="OKCoin.cn" default_off='failed ruleset test'>
 
 	<target host="okcoin.cn" />
 	<target host="img.okcoin.cn" />
